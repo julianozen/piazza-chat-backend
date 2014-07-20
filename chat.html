@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chat Client</title>
+ 
+<!-- Include the Socket.IO and Ext libraries -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="//cdn.sencha.io/ext-4.1.1-gpl/ext-all-dev.js"></script>
+ 
+<!-- Write our custom code -->
+<script>
+Ext.DomHelper.useDom = true; // prevent XSS
+ 
+var socket = io.connect();
+socket.on("someonesaid", function(content){
+	// This callback runs when the server sends us a "someonesaid" event
+	Ext.fly("messages").createChild({
+		tag: "li",
+		children: [content]
+	});
+});
+Ext.onReady(function(){
+	Ext.fly("send").on("click", function(){
+		// When the "send" button is clicked, emit a "message" event to the server containing a chat message
+		socket.emit("message", Ext.fly("comment").getValue());
+	});
+});
+</script>
+ 
+</head>
+<body>
+<ul id="messages">
+</ul>
+ 
+<p>
+	<textarea id="comment"></textarea>
+	<button id="send">Send Comment</button>
+</p>
+</body>
+</html>
+

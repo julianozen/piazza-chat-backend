@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <title>Piazza Chat</title>
+    <script src='http://static.opentok.com/webrtc/v2.2/js/opentok.min.js'></script>
+<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+
+<!-- Optional theme -->
+<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css'>
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+<script src='http://macdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
+
+<link rel='stylesheet' href='style.css'>
+
+
+
+    <script src='/socket.io/socket.io.js'></script>
+
+  <script type='text/javascript'>
+  var apiKey    = 'YOUR_API_KEY_HERE';
+  var sessionId = 'YOUR_SESSION_ID_HERE';
+  var token     = 'YOUR_TOKEN_HERE';
+  var number = 0;
+
+  function sessionConnectedHandler (event) {
+     session.publish( publisher );
+     subscribeToStreams(event.streams);
+  }
+  function subscribeToStreams(streams) {
+    for (var i = 0; i < streams.length; i++) {
+        var stream = streams[i];
+        if (stream.connection.connectionId
+               != session.connection.connectionId) {
+            session.subscribe(stream, 'mySubscriberElement'+ (++number),
+                                   {width:400, height:300});
+
+          // var body = document.getElementById('video_body');
+          var newChild = $('<div/>');
+          newChild.attr('id', 'mySubScriberElement' + (number + 1));
+          newChild.appendTo('#video_body');
+
+          // body.appendChild(" <div style=''><div id='"+number+1+ "'>User Video</div></div>");
+
+        }
+    }
+  }
+  function streamCreatedHandler(event) {
+    subscribeToStreams(event.streams);
+
+  }
+  // var dom = document.getElementById('user_video');
+
+  var publisherProperties = {width:400, height:300};
+
+  var publisher = TB.initPublisher(apiKey, 'user_video', publisherProperties);
+  var session   = TB.initSession(sessionId);
+
+  session.connect(apiKey, token);
+  session.addEventListener('sessionConnected',
+                           sessionConnectedHandler);
+
+  session.addEventListener('streamCreated',
+                           streamCreatedHandler);
+
+
+
+  console.log(apiKey);
+  console.log(sessionId);
+  console.log(token);
+
+
+
+
+
+
+
+
+
+</script>
+
+
+  </head>
+  <body>
+    <nav class='navbar navbar-default' role='navigation'>
+  <div class='container-fluid'>
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class='navbar-header'>
+      <button type='button' class='navbar-toggle' data-toggle='collapse' data-target='#bs-example-navbar-collapse-1'>
+        <span class='sr-only'>Toggle navigation</span>
+        <span class='icon-bar'></span>
+        <span class='icon-bar'></span>
+        <span class='icon-bar'></span>
+      </button>
+      <div class='navbar-brand'>Piazza Chat</div>
+    </div>
+  </div><!-- /.container-fluid -->
+</nav>
+    <div id="video_body" class='container'>
+      <div style="float:right">
+        <div id='user_video'>
+          User Video
+        </div>
+      </div>
+      <div id='mySubscriberElement1'>
+
+          User Video
+      </div>
+
+
+
+
+
+
+
+    </div>
+  </body>
+</html>
